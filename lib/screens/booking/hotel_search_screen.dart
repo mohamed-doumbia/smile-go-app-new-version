@@ -4,12 +4,8 @@ import 'package:intl/intl.dart';
 import '../../config/theme.dart';
 import '../../widgets/custom_header.dart';
 import '../../widgets/custom_bottom_bar.dart';
-
-// Importez les providers nécessaires (nous utiliserons BookingProvider pour simuler la recherche)
 import '../../providers/booking_provider.dart';
-import 'hotel_results_screen.dart';
-// Importez l'écran de destination (à définir après la recherche)
-// import 'hotel_results_screen.dart';
+import 'hotel_results_screen.dart'; // Écran de destination après la recherche
 
 class HotelSearchScreen extends StatefulWidget {
   const HotelSearchScreen({super.key});
@@ -19,7 +15,7 @@ class HotelSearchScreen extends StatefulWidget {
 }
 
 class _HotelSearchScreenState extends State<HotelSearchScreen> {
-  // Contrôleurs pour les champs (basés sur Screen 2)
+  // Contrôleurs pour les champs
   final TextEditingController destinationController = TextEditingController(text: "Dakar, Senegal");
   final TextEditingController checkInDateController = TextEditingController(text: "Mer. 19 nov.");
   final TextEditingController checkOutDateController = TextEditingController(text: "Jeu. 20 nov.");
@@ -31,20 +27,46 @@ class _HotelSearchScreenState extends State<HotelSearchScreen> {
     "Abidjan, Côte d'Ivoire",
     "Paris, France",
     "New York, États-Unis",
-    "Dakar, Senegal", // Ajouté pour le test
+    "Dakar, Senegal",
   ];
 
   @override
   Widget build(BuildContext context) {
-    // Note: Utilisation du BookingProvider pour gérer l'état de chargement
     final booking = Provider.of<BookingProvider>(context);
 
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          // 1. HEADER
-          const CustomHeader(),
+          // 1. HEADER avec "Hotels"
+          Container(
+            decoration: const BoxDecoration(
+              color: AppColors.primaryDark,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.zero,
+                bottomRight: Radius.zero,
+              ),
+            ),
+            child: Column(
+              children: [
+                const CustomHeader(),
+                const Padding(
+                  padding: EdgeInsets.only(left: 20, bottom: 20),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Hotels",
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
 
           // 2. CONTENU
           Expanded(
@@ -53,14 +75,12 @@ class _HotelSearchScreenState extends State<HotelSearchScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Hotels", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 30),
-
-                  // 3. CARTE DESTINATION
-                  _buildHotelInputCard(
+                  // 3. CARTE DESTINATION (Non-éditable, ouvre un modal de sélection)
+                  _buildInputCard(
                     label: "Destination",
-                    valueController: destinationController,
+                    controller: destinationController,
                     onTap: () => _showCountryPicker(destinationController),
+                    isEditable: false,
                   ),
                   const SizedBox(height: 20),
 
@@ -68,20 +88,15 @@ class _HotelSearchScreenState extends State<HotelSearchScreen> {
                   _buildDatesCard(booking),
                   const SizedBox(height: 20),
 
-                  // 5. CARTE CHAMBRE/ADULTE
-                  _buildHotelInputCard(
+                  // 5. CARTE CHAMBRE/ADULTE (Éditable, le texte se vide au clic)
+                  _buildInputCard(
                     label: "Chambre 1",
-                    valueController: roomsGuestsController,
-                    onTap: () {
-                      // Logique pour sélectionner les chambres/adultes (ici on simule)
-                      print("Ouvrir sélecteur chambre/adulte");
-                    },
+                    controller: roomsGuestsController,
+                    isEditable: true,
                   ),
                   const SizedBox(height: 30),
 
                   // 6. BOUTON AJOUTER UN VOL (simulé)
-                  // Bien que l'image montre "Ajouter un vol", cela semble être une erreur visuelle ou une fonctionnalité avancée du même template
-                  // Je l'implémente comme un bouton standard pour respecter le design.
                   SizedBox(
                     width: double.infinity,
                     height: 50,
@@ -132,26 +147,66 @@ class _HotelSearchScreenState extends State<HotelSearchScreen> {
     );
   }
 
-  // --- WIDGETS SPÉCIFIQUES ---
+  // --- WIDGET D'ENTRÉE GÉNÉRIQUE POUR L'HÔTEL (Gère Éditable et Non-éditable) ---
+  Widget _buildInputCard({
+    required String label,
+    required TextEditingController controller,
+    VoidCallback? onTap,
+    bool isEditable = false,
+  }) {
 
-  // Card générale pour Destination / Chambre
-  Widget _buildHotelInputCard({required String label, required TextEditingController valueController, required VoidCallback onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-        decoration: BoxDecoration(
-          color: const Color(0xFFEEEEEE),
-          borderRadius: BorderRadius.circular(10),
+    // Si le champ n'est pas éditable (Destination, Dates)
+    if (!isEditable) {
+      return GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: double.infinity, // Toute la largeur
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          decoration: BoxDecoration(
+            color: const Color(0xFFEEEEEE),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+              const SizedBox(height: 4),
+              Text(controller.text, style: const TextStyle(fontSize: 16, color: Colors.black87, fontWeight: FontWeight.w500)),
+            ],
+          ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-            const SizedBox(height: 4),
-            Text(valueController.text, style: const TextStyle(fontSize: 16, color: Colors.black87, fontWeight: FontWeight.w500)),
-          ],
-        ),
+      );
+    }
+
+    // Si le champ est éditable (Chambre 1)
+    return Container(
+      width: double.infinity, // Toute la largeur
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEEEEEE),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          const SizedBox(height: 4),
+          TextField(
+            controller: controller,
+            onTap: () {
+              // Logique pour vider le texte au premier clic
+              if (controller.text == "1 Adulte") {
+                controller.clear();
+              }
+            },
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              isDense: true,
+              contentPadding: EdgeInsets.zero,
+            ),
+            style: const TextStyle(fontSize: 16, color: Colors.black87, fontWeight: FontWeight.w500),
+          ),
+        ],
       ),
     );
   }
@@ -159,6 +214,7 @@ class _HotelSearchScreenState extends State<HotelSearchScreen> {
   // Card spécifique pour les Dates (Enregistrement -> Départ)
   Widget _buildDatesCard(BookingProvider booking) {
     return Container(
+      width: double.infinity, // Toute la largeur
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: const Color(0xFFEEEEEE),
@@ -204,23 +260,19 @@ class _HotelSearchScreenState extends State<HotelSearchScreen> {
   }
 
   // --- LOGIQUE MODAL DE CHARGEMENT (Screen 3) ---
-
   void _showLoadingModal(BuildContext context, BookingProvider booking) {
-    // On lance la recherche (simulée ou réelle)
     booking.searchHotels(destinationController.text, checkInDateController.text);
 
-    // Affichage du modal
     showDialog(
       context: context,
-      barrierDismissible: false, // Empêche de fermer en cliquant à l'extérieur
+      barrierDismissible: false,
       builder: (context) {
         return Consumer<BookingProvider>(
           builder: (context, booking, child) {
-            // Si le chargement est terminé, fermer le modal
             if (!booking.isLoading) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                Navigator.of(context).pop(); // Ferme le modal
-                // REDIRECTION après la recherche (vers les résultats d'hôtels, à définir)
+                Navigator.of(context).pop();
+                // REDIRECTION vers Hotel Results Screen
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const HotelResultsScreen()));
 
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -239,7 +291,6 @@ class _HotelSearchScreenState extends State<HotelSearchScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Spinner de chargement (visible sur l'image)
                     const CircularProgressIndicator(color: AppColors.primaryDark),
                     const SizedBox(height: 20),
                     const Text(
@@ -248,7 +299,6 @@ class _HotelSearchScreenState extends State<HotelSearchScreen> {
                       style: TextStyle(color: AppColors.primaryDark, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 10),
-                    // Détails de la recherche
                     Text(
                       "${destinationController.text}\n${checkInDateController.text} au ${checkOutDateController.text}\n${roomsGuestsController.text}",
                       textAlign: TextAlign.center,
@@ -328,7 +378,6 @@ class _HotelSearchScreenState extends State<HotelSearchScreen> {
     if (picked != null) {
       setState(() {
         selectedDate = picked;
-        // Utilisation de DateFormat si vous avez importé intl
         controller.text = DateFormat('EEE. d MMM', 'fr').format(picked);
       });
     }

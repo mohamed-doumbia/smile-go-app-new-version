@@ -12,20 +12,44 @@ class HotelResultsScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          // 1. HEADER STANDARD (Zone Vert Foncé, sans titre)
-          const CustomHeader(),
+          // 1. HEADER avec "Hotels"
+          Container(
+            decoration: const BoxDecoration(
+              color: AppColors.primaryDark,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.zero,
+                bottomRight: Radius.zero,
+              ),
+            ),
+            child: Column(
+              children: [
+                const CustomHeader(),
+                const Padding(
+                  padding: EdgeInsets.only(left: 20, bottom: 20),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Hotels",
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
 
-          // 2. CORPS DE L'ÉCRAN (Zone Blanche, Contient le Titre et les Résultats)
+          // 2. CORPS DE L'ÉCRAN (Zone Blanche, Contient les Résultats)
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // TITRE "Hotels" PLACÉ MANUELLEMENT SOUS LE HEADER
                   const SizedBox(height: 20),
-                  const Text("Hotels", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 15),
 
                   // NAVIGATION SPÉCIFIQUE DES RÉSULTATS (Flèche, Date, Crayon)
                   Row(
@@ -34,8 +58,9 @@ class HotelResultsScreen extends StatelessWidget {
                       GestureDetector(
                         onTap: () => Navigator.pop(context),
                         child: Image.asset(
-                          'assets/icons/picto_fleche_retour.png', // ⚠️ CHEMIN FICTIF
-                          height: 24, width: 24,
+                          'assets/icons/picto_fleche_retour.png',
+                          height: 24,
+                          width: 24,
                           errorBuilder: (c, e, s) => const Icon(Icons.arrow_back, color: AppColors.primaryDark),
                         ),
                       ),
@@ -47,12 +72,12 @@ class HotelResultsScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                                "Sénégal, 19 nov. au 20 nov.",
-                                style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.primaryDark)
+                              "Sénégal, 19 nov. au 20 nov.",
+                              style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.primaryDark),
                             ),
                             Text(
-                                "6 Résultat(s)",
-                                style: TextStyle(fontSize: 12, color: Colors.grey)
+                              "6 Résultat(s)",
+                              style: TextStyle(fontSize: 12, color: Colors.grey),
                             ),
                           ],
                         ),
@@ -62,8 +87,9 @@ class HotelResultsScreen extends StatelessWidget {
                       GestureDetector(
                         onTap: () { /* Logique pour éditer la recherche */ },
                         child: Image.asset(
-                          'assets/icons/picto_crayon_edit.png', // ⚠️ CHEMIN FICTIF
-                          height: 20, width: 20,
+                          'assets/icons/pencil.png',
+                          height: 20,
+                          width: 20,
                           errorBuilder: (c, e, s) => const Icon(Icons.edit, color: AppColors.primaryDark),
                         ),
                       ),
@@ -80,7 +106,7 @@ class HotelResultsScreen extends StatelessWidget {
                     location: "Rue Pz 75 Mermoz",
                     price: "XOF24, 514",
                     rating: 3.0,
-                    imagePath: 'assets/images/hotel_azalay_1.jpg', // ⚠️ CHEMIN FICTIF
+                    imagePath: 'assets/images/Img illustr 1.png',
                   ),
                   const SizedBox(height: 15),
 
@@ -90,7 +116,7 @@ class HotelResultsScreen extends StatelessWidget {
                     location: "Avenue Lamine Guèye",
                     price: "XOF35, 900",
                     rating: 4.5,
-                    imagePath: 'assets/images/hotel_teranga_2.jpg', // ⚠️ CHEMIN FICTIF
+                    imagePath: 'assets/images/Img illustr 2.png',
                   ),
                   const SizedBox(height: 15),
                   // ... autres cartes
@@ -138,10 +164,10 @@ class HotelResultsScreen extends StatelessWidget {
                 ),
               ),
               // Icône "de photos"
-              Positioned(
-                top: 10, right: 10,
-                child: Image.asset('assets/icons/picto_photos.png', height: 30, errorBuilder: (c,e,s) => const Icon(Icons.camera_alt, color: Colors.white)),
-              ),
+              // Positioned(
+              //   top: 10, right: 10,
+              //   child: Image.asset('assets/icons/picto_photos.png', height: 30, errorBuilder: (c,e,s) => const Icon(Icons.camera_alt, color: Colors.white)),
+              // ),
             ],
           ),
 

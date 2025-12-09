@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/nav_provider.dart';
 import '../config/theme.dart';
+import '../screens/core/dashboard_screen.dart'; // ← Ajoute cet import
 
 class CustomBottomBar extends StatelessWidget {
   const CustomBottomBar({super.key});
@@ -42,15 +43,15 @@ class CustomBottomBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 GestureDetector(
-                  onTap: () => nav.setIndex(0),
+                  onTap: () => _navigateToTab(context, nav, 0),
                   child: Image.asset('assets/icons/bouton_HOME_screen_6-removebg-preview.png', height: 60),
                 ),
                 GestureDetector(
-                  onTap: () => nav.setIndex(1),
+                  onTap: () => _navigateToTab(context, nav, 1),
                   child: Image.asset('assets/icons/bouton HISTORIQUE screen 6.png', height: 60),
                 ),
                 GestureDetector(
-                  onTap: () => nav.setIndex(2),
+                  onTap: () => _navigateToTab(context, nav, 2),
                   child: Image.asset('assets/icons/bouton Parame╠Çtre screen 6.png', height: 60),
                 ),
               ],
@@ -59,5 +60,21 @@ class CustomBottomBar extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  /// Fonction pour naviguer vers un tab
+  void _navigateToTab(BuildContext context, NavProvider nav, int index) {
+    // 1. Changer l'index du tab
+    nav.setIndex(index);
+
+    // 2. Vérifier si on peut faire pop (on est dans une sous-page)
+    if (Navigator.canPop(context)) {
+      // Retourner à DashboardScreen en supprimant toutes les pages au-dessus
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const DashboardScreen()),
+            (route) => false, // Supprime toutes les routes précédentes
+      );
+    }
+    // Sinon, on est déjà sur DashboardScreen, rien à faire
   }
 }
